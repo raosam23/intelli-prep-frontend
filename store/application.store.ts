@@ -1,17 +1,6 @@
 import { create } from "zustand";
 import axios from "@/lib/axios";
-
-interface JobApplication {
-    id: string;
-    user_id: string;
-    resume_id: string;
-    jd_raw_text: string;
-    fit_score: number | null;
-    fit_breakdown_score: string | null;
-    status: string;
-    created_at: string;
-    updated_at: string;
-}
+import { JobApplication } from "@/types";
 
 interface ApplicationState {
     applications: JobApplication[];

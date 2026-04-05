@@ -1,13 +1,7 @@
 import { create } from "zustand";
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
-
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    createdAt: string;
-}
+import { User } from "@/types";
 
 interface AuthState {
     user: User | null;

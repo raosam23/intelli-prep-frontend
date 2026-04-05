@@ -1,14 +1,6 @@
 import { create } from "zustand";
 import axios from "@/lib/axios";
-
-interface Resume {
-    id: string;
-    user_id: string;
-    file_name: string;
-    parsed_json: Record<string, unknown> | null;
-    created_at: string;
-    updated_at: string;
-}
+import { Resume } from "@/types";
 
 interface ResumeState {
     resumes: Resume[];

@@ -1,26 +1,6 @@
 import { create } from "zustand";
 import axios from "@/lib/axios";
-
-interface Interview {
-    id: string;
-    job_application_id: string;
-    num_questions: number;
-    difficulty: string;
-    interview_type: string;
-    focus_area: string | null;
-    status: string;
-    feedback: string | null;
-    created_at: string;
-    updated_at: string;
-}
-
-interface CreateSessionData {
-    job_application_id: string;
-    num_questions: number;
-    difficulty: string;
-    interview_type: string;
-    focus_area?: string;
-}
+import { Interview, CreateSessionData } from "@/types";
 
 interface InterviewState {
     sessions: Interview[];
