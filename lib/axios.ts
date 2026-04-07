@@ -17,8 +17,11 @@ instance.interceptors.response.use((response) => {
     return response;
 }, (error) => {
     if (error.response && error.response.status === 401) {
-        Cookies.remove("token");
-        window.location.href = "/login";
+        const token = Cookies.get("token");
+        if (token) {
+            Cookies.remove("token");
+            window.location.href = "/login";
+        }
     }
     return Promise.reject(error);
 })
