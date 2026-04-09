@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import axios from "@/lib/axios";
 import { Resume } from "@/types";
+import { isAxiosError } from "axios";
+import { APIError } from "@/lib/error";
 
 interface ResumeState {
     resumes: Resume[];
@@ -21,7 +23,13 @@ export const useResumeStore = create<ResumeState>((set) => ({
             const response = await axios.get("/api/resumes");
             set({ resumes: response.data.resumes });
         } catch (error: unknown) {
-            console.error("Failed to fetch resumes", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to fetch resumes",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
         } finally {
             set({ isLoading: false });
         }
@@ -31,10 +39,20 @@ export const useResumeStore = create<ResumeState>((set) => ({
         try {
             const formData = new FormData();
             formData.append("file", file);
-            await axios.post("/api/resumes/upload", formData);
+            await axios.post("/api/resumes/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
             await useResumeStore.getState().fetchResumes();
         } catch (error: unknown) {
-            console.error("Failed to upload resume", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to upload resume",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
         } finally {
             set({ isLoading: false });
         }
@@ -45,7 +63,13 @@ export const useResumeStore = create<ResumeState>((set) => ({
             await axios.delete(`/api/resumes/${id}`);
             await useResumeStore.getState().fetchResumes();
         } catch (error: unknown) {
-            console.error("Failed to delete resume", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to delete resume",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
         } finally {
             set({ isLoading: false });
         }
@@ -54,11 +78,21 @@ export const useResumeStore = create<ResumeState>((set) => ({
         set({ isLoading: true });
         try {
             const formData = new FormData();
-            formData.append("file", file);
-            await axios.put(`/api/resumes/${id}`, formData);
+            formData.append("new_file", file);
+            await axios.put(`/api/resumes/${id}`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
             await useResumeStore.getState().fetchResumes();
         } catch (error: unknown) {
-            console.error("Failed to update resume", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to update resume",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
         } finally {
             set({ isLoading: false });
         }
