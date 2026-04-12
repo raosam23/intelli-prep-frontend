@@ -66,7 +66,7 @@ const ResumeCard = ({ resume }: { resume: Resume }) => {
                 <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1 border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700h cursor-pointer"
+                    className="flex-1 border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700 cursor-pointer"
                     onClick={() => updateInputRef.current?.click()}
                 >
                     <RefreshCw className="mr-2" />

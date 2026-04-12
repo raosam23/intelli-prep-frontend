@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import axios from "@/lib/axios";
 import { JobApplication } from "@/types";
+import { isAxiosError } from "axios";
+import { APIError } from "@/lib/error";
 
 interface ApplicationState {
     applications: JobApplication[];
@@ -24,7 +26,14 @@ export const useApplicationStore = create<ApplicationState>((set) => ({
             const response = await axios.get('/api/job-applications');
             set({ applications: response.data.job_applications });
         } catch (error: unknown) {
-            console.error("Failed to fetch applications", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to fetch job applications",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
+            throw new APIError("Failed to fetch job applications");
         } finally {
             set({ isLoading: false });
         }
@@ -35,7 +44,14 @@ export const useApplicationStore = create<ApplicationState>((set) => ({
             const response = await axios.get(`/api/job-applications/${id}`);
             set({ currentApplication: response.data })
         } catch (error: unknown) {
-            console.error("Failed to fetch application", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to fetch job application",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
+            throw new APIError("Failed to fetch job application");
         } finally {
             set({ isLoading: false });
         }
@@ -46,7 +62,14 @@ export const useApplicationStore = create<ApplicationState>((set) => ({
             await axios.post('/api/job-applications', { resume_id: resumeId, jd_raw_text: jdRawText });
             await useApplicationStore.getState().fetchApplications();
         } catch (error: unknown) {
-            console.error("Failed to create job application", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to create job application",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
+            throw new APIError("Failed to create job application");
         } finally {
             set({ isLoading: false });
         }
@@ -57,7 +80,14 @@ export const useApplicationStore = create<ApplicationState>((set) => ({
             await axios.put(`/api/job-applications/${id}`, { status, jd_raw_text: jdRawText });
             await useApplicationStore.getState().fetchApplications();
         } catch (error: unknown) {
-            console.error("Failed to update job application", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to update job application",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
+            throw new APIError("Failed to update job application");
         } finally {
             set({ isLoading: false });
         }
@@ -68,7 +98,14 @@ export const useApplicationStore = create<ApplicationState>((set) => ({
             await axios.delete(`/api/job-applications/${id}`);
             await useApplicationStore.getState().fetchApplications();
         } catch (error: unknown) {
-            console.error("Failed to delete job application", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to delete job application",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
+            throw new APIError("Failed to delete job application");
         } finally {
             set({ isLoading: false });
         }
