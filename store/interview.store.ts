@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import axios from "@/lib/axios";
 import { Interview, CreateSessionData } from "@/types";
+import { isAxiosError } from "axios";
+import { APIError } from "@/lib/error";
 
 interface InterviewState {
     sessions: Interview[];
@@ -23,7 +25,14 @@ export const useInterviewStore = create<InterviewState>((set) => ({
             const response = await axios.get(`/api/interview-sessions/job-application/${jobApplicationId}`)
             set({ sessions: response.data.interview_sessions });
         } catch (error: unknown) {
-            console.error("Failed to fetch interview sessions", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to fetch interview sessions",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
+            throw new APIError("Failed to fetch interview sessions");
         } finally {
             set({ isLoading: false });
         }
@@ -34,7 +43,14 @@ export const useInterviewStore = create<InterviewState>((set) => ({
             const response = await axios.get(`/api/interview-sessions/${id}`);
             set({ currentSession: response.data });
         } catch (error: unknown) {
-            console.error("Failed to fetch interview session", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to fetch interview session",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
+            throw new APIError("Failed to fetch interview session")
         } finally {
             set({ isLoading: false });
         }
@@ -44,7 +60,14 @@ export const useInterviewStore = create<InterviewState>((set) => ({
         try {
             await axios.post("/api/interview-sessions", data);
         } catch (error: unknown) {
-            console.error("Failed to create interview session", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to create interview session",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
+            throw new APIError("Failed to create interview session");
         } finally {
             set({ isLoading: false });
         }
@@ -54,7 +77,14 @@ export const useInterviewStore = create<InterviewState>((set) => ({
         try {
             await axios.delete(`/api/interview-sessions/${id}`);
         } catch (error: unknown) {
-            console.error("Failed to delete interview session", error);
+            if (isAxiosError(error)) {
+                throw new APIError(
+                    error.response?.data?.detail || "Failed to delete an interview session",
+                    error.response?.status,
+                    error.response?.data?.detail
+                )
+            }
+            throw new APIError("Failed to delete an interview session")
         } finally {
             set({ isLoading: false });
         }

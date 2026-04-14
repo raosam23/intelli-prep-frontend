@@ -5,7 +5,7 @@ const EmptyState = ({ resumes }: { resumes: Resume[] }) => {
             <p className="text-zinc-400">No job applications yet.</p>
             {resumes.length === 0 && <p className="text-zinc-400 text-sm">Upload your first resume to get started.</p>}
         </div>
-    )
-}
+    );
+};
 
-export default EmptyState
+export default EmptyState;
