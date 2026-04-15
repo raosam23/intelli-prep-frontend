@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useApplicationStore } from "@/store/application.store";
 import { useInterviewStore } from "@/store/interview.store";
 import { toast } from "sonner";
@@ -13,6 +13,7 @@ import SessionCard from "@/components/Sessions/SessionCard";
 import CreateSessionDialog from "@/components/Sessions/CreateSessionDialog";
 import { getStatusColor } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
+import EditApplicationDialog from "@/components/applications/EditApplicationDialog";
 
 const JobApplicationDetails = () => {
     const params = useParams();
@@ -22,15 +23,21 @@ const JobApplicationDetails = () => {
     const { sessions, fetchSessionsByApplication, isLoading: isSessionsLoading } = useInterviewStore();
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
     const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+    const hasEditSubmittedRef = useRef(false);
+
+    useEffect(() => {
+        if (!isLoading && hasEditSubmittedRef.current) {
+            setIsEditDialogOpen(false);
+            hasEditSubmittedRef.current = false;
+        }
+    }, [isLoading]);
 
     useEffect(() => {
         const getApplicationById = async (applicationId: string) => {
             setIsPageLoading(true);
             try {
-                await Promise.all([
-                    fetchApplicationById(applicationId),
-                    fetchSessionsByApplication(applicationId)
-                ]);
+                await Promise.all([fetchApplicationById(applicationId), fetchSessionsByApplication(applicationId)]);
             } catch (error: unknown) {
                 if (error instanceof APIError) {
                     console.error("Error in fetching interview sessions: ", error.message);
@@ -60,24 +67,32 @@ const JobApplicationDetails = () => {
                 >
                     Back
                 </Button>
-                <Button
-                    variant="destructive"
-                    className="cursor-pointer"
-                    onClick={async () => {
-                        try {
-                            await deleteApplication(id);
-                            router.push("/applications");
-                        } catch (error: unknown) {
-                            if (error instanceof APIError) {
-                                toast.error(error.message);
-                            } else {
-                                toast.error("Unknown error occurred while deleting application");
+                <div className="flex gap-2">
+                    <Button
+                        className="cursor-pointer border-zinc-700 text-zinc-400 hover:text-white"
+                        onClick={() => setIsEditDialogOpen(true)}
+                    >
+                        Edit
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        className="cursor-pointer"
+                        onClick={async () => {
+                            try {
+                                await deleteApplication(id);
+                                router.push("/applications");
+                            } catch (error: unknown) {
+                                if (error instanceof APIError) {
+                                    toast.error(error.message);
+                                } else {
+                                    toast.error("Unknown error occurred while deleting application");
+                                }
                             }
-                        }
-                    }}
-                >
-                    Delete
-                </Button>
+                        }}
+                    >
+                        Delete
+                    </Button>
+                </div>
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
                 <Badge
@@ -113,6 +128,16 @@ const JobApplicationDetails = () => {
                     jobApplicationId={id}
                 />
             </div>
+            <EditApplicationDialog
+                isDialogOpen={isEditDialogOpen}
+                setIsDialogOpen={setIsEditDialogOpen}
+                applicationId={id}
+                applicationStatus={currentApplication?.status as ApplicationStatus}
+                applicationJdRawText={currentApplication?.jd_raw_text ?? ""}
+                onSubmitStart={() => {
+                    hasEditSubmittedRef.current = true;
+                }}
+            />
         </div>
     );
 };

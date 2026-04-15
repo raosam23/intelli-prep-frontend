@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import axios from "@/lib/axios";
-import { JobApplication } from "@/types";
+import { ApplicationStatus, JobApplication } from "@/types";
 import { isAxiosError } from "axios";
 import { APIError } from "@/lib/error";
 
@@ -12,7 +12,7 @@ interface ApplicationState {
     fetchApplications: () => Promise<void>;
     fetchApplicationById: (id: string) => Promise<void>;
     createApplication: (resumeId: string, jdRawText: string) => Promise<void>;
-    updateApplication: (id: string, status?: string, jdRawText?: string) => Promise<void>;
+    updateApplication: (id: string, status?: ApplicationStatus, jdRawText?: string) => Promise<void>;
     deleteApplication: (id: string) => Promise<void>;
 }
 
