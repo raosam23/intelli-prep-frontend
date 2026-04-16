@@ -35,3 +35,7 @@ export const getSessionStatusColor = (status: InterviewStatus): string => {
       return "bg-gray-500";
   }
 };
+
+export type InterviewRouteParams = {
+  session_id: string;
+}
