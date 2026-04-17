@@ -40,21 +40,23 @@ const InterviewPage = () => {
     }
     return (
         <div className="min-h-screen w-full p-6 flex flex-col gap-4 max-w-2xl mx-auto items-center justify-center">
-            <div className="flex items-center gap-4">
-                <Button
-                    size="sm"
-                    className="w-fit border-zinc-600 bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 cursor-pointer"
-                    onClick={() => router.back()}
-                >
-                    Back
-                </Button>
-                <h1 className="text-2xl font-bold text-white">Interview Session</h1>
+            <div className="flex items-center">
+                <h1 className="text-3xl font-bold text-white">Interview Session</h1>
             </div>
 
             <Card className="rounded-2xl border border-zinc-700 bg-zinc-900 p-8 shadow-xl flex flex-col gap-6 w-full">
-                <Badge className={`${getSessionStatusColor(currentSession.status)} text-white capitalize w-fit`}>
-                    {currentSession.status.replaceAll("_", " ")}
-                </Badge>
+                <div className="flex items-center justify-between">
+                    <Badge className={`${getSessionStatusColor(currentSession.status)} text-black capitalize w-fit`}>
+                        {currentSession.status.replaceAll("_", " ")}
+                    </Badge>
+                    <Button
+                        size="sm"
+                        className="w-fit border-zinc-600 bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 cursor-pointer"
+                        onClick={() => router.back()}
+                    >
+                        Back
+                    </Button>
+                </div>
 
                 <div className="rounded-xl border border-zinc-700 overflow-hidden divide-y divide-zinc-700">
                     <div className="grid grid-cols-2 divide-x divide-zinc-700">
@@ -80,27 +82,28 @@ const InterviewPage = () => {
                             </span>
                         </div>
                         <div className="p-5 flex flex-col gap-1">
-                            <span className="text-sm text-zinc-500">Feedback</span>
-                            <span className="text-lg font-semibold text-zinc-100">
-                                {currentSession.feedback ?? "No feedback available"}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 divide-x divide-zinc-700">
-                        <div className="p-5 flex flex-col gap-1">
                             <span className="text-sm text-zinc-500">Interview Type</span>
                             <span className="text-lg font-semibold text-zinc-100 capitalize">
                                 {currentSession.interview_type.replaceAll("_", " ")}
                             </span>
                         </div>
-                        <div className="p-5 flex flex-col gap-1">
-                            <span className="text-sm text-zinc-500">Focus Area</span>
-                            <span className="text-lg font-semibold text-zinc-100 capitalize">
-                                {(currentSession.focus_area ?? "No focus area available").replaceAll("_", " ")}
-                            </span>
-                        </div>
                     </div>
+                    {(currentSession.feedback || currentSession.focus_area) && (
+                        <div className="grid grid-cols-2 divide-x divide-zinc-700">
+                            <div className="p-5 flex flex-col gap-1">
+                                <span className="text-sm text-zinc-500">Feedback</span>
+                                <span className="text-lg font-semibold text-zinc-100">
+                                    {currentSession.feedback ?? "No feedback available"}
+                                </span>
+                            </div>
+                            <div className="p-5 flex flex-col gap-1">
+                                <span className="text-sm text-zinc-500">Focus Area</span>
+                                <span className="text-lg font-semibold text-zinc-100 capitalize">
+                                    {(currentSession.focus_area ?? "No focus area available").replaceAll("_", " ")}
+                                </span>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <Button

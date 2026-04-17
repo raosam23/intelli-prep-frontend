@@ -13,7 +13,7 @@ const SessionCard = ({ session }: { session: Interview }) => {
             onClick={() => router.push(`/interview/${session.id}`)}
         >
             <div className="flex items-center justify-between">
-                <Badge className={`${getSessionStatusColor(session.status)} text-white capitalize`}>
+                <Badge className={`${getSessionStatusColor(session.status)} text-black capitalize w-fit`}>
                     {session.status.replace("_", " ")}
                 </Badge>
                 <p className="text-zinc-500 text-xs">{new Date(session.created_at).toLocaleDateString()}</p>

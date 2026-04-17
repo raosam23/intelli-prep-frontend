@@ -12,7 +12,9 @@ const ApplicationCard = ({ application }: { application: JobApplication }) => {
             className="cursor-pointer p-4 bg-zinc-900 border-zinc-800 hover:bg-zinc-800 transition space-y-3"
             onClick={() => router.push(`/applications/${application.id}`)}
         >
-            <Badge className={`${getStatusColor(application.status)} text-white`}>{application.status}</Badge>
+            <Badge className={`${getStatusColor(application.status)} text-black w-fit capitalize`}>
+                {application.status}
+            </Badge>
             <p className="text-white font-medium">Fit Score: {application.fit_score ?? "Not analyzed yet"}</p>
             <div className="flex items-center justify-between">
                 <p className="text-sm text-zinc-400">

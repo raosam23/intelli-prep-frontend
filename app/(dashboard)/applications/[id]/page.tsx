@@ -96,7 +96,7 @@ const JobApplicationDetails = () => {
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
                 <Badge
-                    className={`${getStatusColor(currentApplication?.status as ApplicationStatus)} text-white w-fit`}
+                    className={`${getStatusColor(currentApplication?.status as ApplicationStatus)} text-black capitalize w-fit`}
                 >
                     {currentApplication?.status}
                 </Badge>
