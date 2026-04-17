@@ -76,6 +76,7 @@ export const useInterviewStore = create<InterviewState>((set) => ({
         set({ isLoading: true });
         try {
             await axios.delete(`/api/interview-sessions/${id}`);
+            set({ currentSession: null });
         } catch (error: unknown) {
             if (isAxiosError(error)) {
                 throw new APIError(

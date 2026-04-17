@@ -36,7 +36,7 @@ const Sidebar = () => {
                 </Link>
                 <Link
                     href="/applications"
-                    className={`flex items-center gap-3 px-4 py-2 ${pathname === "/applications" ? "bg-zinc-800 text-white" : "text-zinc-400 hover:text-white hover:bg-zinc-800"}`}
+                    className={`flex items-center gap-3 px-4 py-2 ${pathname.startsWith("/applications") || pathname.startsWith("/interview") ? "bg-zinc-800 text-white" : "text-zinc-400 hover:text-white hover:bg-zinc-800"}`}
                 >
                     <Briefcase size={18} />
                     <span>Applications</span>

@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { useApplicationStore } from "@/store/application.store";
 import { useInterviewStore } from "@/store/interview.store";
 import { toast } from "sonner";
@@ -25,6 +25,7 @@ const JobApplicationDetails = () => {
     const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
     const hasEditSubmittedRef = useRef(false);
+    const hasInterviewCreatedRef = useRef(false);
 
     useEffect(() => {
         if (!isLoading && hasEditSubmittedRef.current) {
@@ -32,6 +33,13 @@ const JobApplicationDetails = () => {
             hasEditSubmittedRef.current = false;
         }
     }, [isLoading]);
+
+    useEffect(() => {
+        if (!isSessionsLoading && hasInterviewCreatedRef.current) {
+            setIsDialogOpen(false);
+            hasInterviewCreatedRef.current = false;
+        }
+    }, [isSessionsLoading]);
 
     useEffect(() => {
         const getApplicationById = async (applicationId: string) => {
@@ -126,6 +134,9 @@ const JobApplicationDetails = () => {
                     isDialogOpen={isDialogOpen}
                     setIsDialogOpen={setIsDialogOpen}
                     jobApplicationId={id}
+                    onSubmitStart={() => {
+                        hasInterviewCreatedRef.current = true;
+                    }}
                 />
             </div>
             <EditApplicationDialog

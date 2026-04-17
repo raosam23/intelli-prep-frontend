@@ -1,6 +1,6 @@
 "use client";
 import { getSessionStatusColor, InterviewRouteParams } from "@/lib/utils";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useInterviewStore } from "@/store/interview.store";
 import { APIError } from "@/lib/error";
@@ -13,7 +13,16 @@ import { Card } from "@/components/ui/card";
 const InterviewPage = () => {
     const router = useRouter();
     const { session_id } = useParams<InterviewRouteParams>();
-    const { isLoading, currentSession, fetchSessionById } = useInterviewStore();
+    const { isLoading, currentSession, fetchSessionById, deleteSession } = useInterviewStore();
+    const isDeletingRef = useRef(false);
+
+    useEffect(() => {
+        if (!isLoading && isDeletingRef.current) {
+            isDeletingRef.current = false;
+            toast.success("Interview session deleted successfully");
+            router.back();
+        }
+    }, [isLoading, router]);
 
     useEffect(() => {
         const getSessionById = async () => {
@@ -38,6 +47,20 @@ const InterviewPage = () => {
             </div>
         );
     }
+    const handleDeleteButton = async () => {
+        isDeletingRef.current = true;
+        try {
+            await deleteSession(session_id);
+        } catch (error: unknown) {
+            isDeletingRef.current = false;
+            if (error instanceof APIError) {
+                console.error("Error in deleting interview session: ", error.message);
+                toast.error(error.message);
+            } else {
+                toast.error("Unknown error occurred while deleting interview session");
+            }
+        }
+    };
     return (
         <div className="min-h-screen w-full p-6 flex flex-col gap-4 max-w-2xl mx-auto items-center justify-center">
             <div className="flex items-center">
@@ -49,13 +72,22 @@ const InterviewPage = () => {
                     <Badge className={`${getSessionStatusColor(currentSession.status)} text-black capitalize w-fit`}>
                         {currentSession.status.replaceAll("_", " ")}
                     </Badge>
-                    <Button
-                        size="sm"
-                        className="w-fit border-zinc-600 bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 cursor-pointer"
-                        onClick={() => router.back()}
-                    >
-                        Back
-                    </Button>
+                    <div className="grid grid-cols-2 gap-4">
+                        <Button
+                            size="sm"
+                            className="w-full border-zinc-600 bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 cursor-pointer"
+                            onClick={() => router.back()}
+                        >
+                            Back
+                        </Button>
+                        <Button
+                            size="sm"
+                            className="w-full border-red-900 bg-red-950 text-red-400 hover:text-red-200 hover:bg-red-900 cursor-pointer"
+                            onClick={handleDeleteButton}
+                        >
+                            Delete
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="rounded-xl border border-zinc-700 overflow-hidden divide-y divide-zinc-700">

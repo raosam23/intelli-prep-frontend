@@ -14,21 +14,28 @@ const CreateSessionDialog = ({
     isDialogOpen,
     setIsDialogOpen,
     jobApplicationId,
+    onSubmitStart,
 }: {
     isDialogOpen: boolean;
     setIsDialogOpen: (open: boolean) => void;
     jobApplicationId: string;
+    onSubmitStart?: () => void;
 }) => {
     const { fetchSessionsByApplication, createSession, isLoading } = useInterviewStore();
-    const [numQuestions, setNumQuestions] = useState<number>(5);
+    const [numQuestions, setNumQuestions] = useState<number | null>(5);
     const [difficulty, setDifficulty] = useState<DifficultyLevel | "">("");
     const [interviewType, setInterviewType] = useState<InterviewType | "">("");
     const [focusArea, setFocusArea] = useState<string>("");
     const handleCreateSession = async (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
+        onSubmitStart?.();
 
         if (difficulty === "" || interviewType === "") {
             toast.error("Please select a difficulty and interview type before creating a session.");
+            return;
+        }
+        if (!numQuestions || numQuestions < 1) {
+            toast.error("Please enter a valid number of questions (minimum 1).");
             return;
         }
         try {
@@ -74,13 +81,23 @@ const CreateSessionDialog = ({
                         <Input
                             id="numQuestions"
                             type="number"
-                            value={numQuestions}
+                            value={numQuestions ?? ""}
                             name="numQuestions"
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                setNumQuestions(Number(event.target.value))
-                            }
+                            min={1}
+                            step={1}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                const value = event.target.value;
+                                if (value === "") {
+                                    setNumQuestions(null);
+                                    return;
+                                }
+                                const numericValue = parseInt(value, 10);
+                                if (!isNaN(numericValue) && numericValue > 0) {
+                                    setNumQuestions(numericValue);
+                                }
+                            }}
                             required
-                            className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 w-fit p-1 rounded-lg active:border-zinc-300"
+                            className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 w-fit p-1 rounded-lg active:border-zinc-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                     </div>
                     <div className="space-x-2 flex items-center justify-between">
