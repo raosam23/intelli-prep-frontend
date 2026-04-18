@@ -1,6 +1,6 @@
 "use client";
 import { getSessionStatusColor, InterviewRouteParams } from "@/lib/utils";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useInterviewStore } from "@/store/interview.store";
 import { APIError } from "@/lib/error";
@@ -9,12 +9,15 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import InterviewFeedbackandFocusAreaDialog from "@/components/interview/InterviewFeedbackandFocusAreaDialog";
 
 const InterviewPage = () => {
     const router = useRouter();
     const { session_id } = useParams<InterviewRouteParams>();
     const { isLoading, currentSession, fetchSessionById, deleteSession } = useInterviewStore();
     const isDeletingRef = useRef(false);
+    const [isFeedbackDialogOpen, setIsFeedbackDialogOpen] = useState<boolean>(false);
+    const [isFocusAreaDialogOpen, setIsFocusAreaDialogOpen] = useState<boolean>(false);
 
     useEffect(() => {
         if (!isLoading && isDeletingRef.current) {
@@ -122,16 +125,34 @@ const InterviewPage = () => {
                     </div>
                     {(currentSession.feedback || currentSession.focus_area) && (
                         <div className="grid grid-cols-2 divide-x divide-zinc-700">
-                            <div className="p-5 flex flex-col gap-1">
+                            <div
+                                className={`p-5 flex flex-col gap-1 ${currentSession.feedback && currentSession.feedback.length > 20 && "cursor-pointer"}`}
+                                onClick={() =>
+                                    currentSession.feedback &&
+                                    currentSession.feedback.length > 20 &&
+                                    setIsFeedbackDialogOpen(true)
+                                }
+                            >
                                 <span className="text-sm text-zinc-500">Feedback</span>
                                 <span className="text-lg font-semibold text-zinc-100">
-                                    {currentSession.feedback ?? "No feedback available"}
+                                    {currentSession.feedback
+                                        ? `${currentSession.feedback.length > 20 ? `${currentSession.feedback.substring(0, 20)}...` : currentSession.feedback}`
+                                        : "No feedback available"}
                                 </span>
                             </div>
-                            <div className="p-5 flex flex-col gap-1">
+                            <div
+                                className={`p-5 flex flex-col gap-1 ${currentSession.focus_area && currentSession.focus_area.length > 20 && "cursor-pointer"}`}
+                                onClick={() =>
+                                    currentSession.focus_area &&
+                                    currentSession.focus_area.length > 20 &&
+                                    setIsFocusAreaDialogOpen(true)
+                                }
+                            >
                                 <span className="text-sm text-zinc-500">Focus Area</span>
                                 <span className="text-lg font-semibold text-zinc-100 capitalize">
-                                    {(currentSession.focus_area ?? "No focus area available").replaceAll("_", " ")}
+                                    {currentSession.focus_area
+                                        ? `${currentSession.focus_area.length > 20 ? `${currentSession.focus_area.substring(0, 20)}...` : currentSession.focus_area}`
+                                        : "No focus area available"}
                                 </span>
                             </div>
                         </div>
@@ -146,6 +167,18 @@ const InterviewPage = () => {
                     Start Interview <ArrowBigRight className="ml-2" />
                 </Button>
             </Card>
+            <InterviewFeedbackandFocusAreaDialog
+                title="feedback"
+                isDialogOpen={isFeedbackDialogOpen}
+                setIsDialogOpen={setIsFeedbackDialogOpen}
+                content={currentSession.feedback ?? "No feedback available"}
+            />
+            <InterviewFeedbackandFocusAreaDialog
+                title="focus area"
+                isDialogOpen={isFocusAreaDialogOpen}
+                setIsDialogOpen={setIsFocusAreaDialogOpen}
+                content={currentSession.focus_area ?? "No focus area available"}
+            />
         </div>
     );
 };

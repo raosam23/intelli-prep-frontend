@@ -8,17 +8,21 @@ interface InterviewState {
     sessions: Interview[];
     currentSession: Interview | null;
     isLoading: boolean;
+    isInterviewActive: boolean;
 
     fetchSessionsByApplication(jobApplicationId: string): Promise<void>;
     fetchSessionById(id: string): Promise<void>;
     createSession(data: CreateSessionData): Promise<void>;
     deleteSession(id: string): Promise<void>;
+    startInterview(): Promise<void>;
+    endInterview(): Promise<void>;
 }
 
 export const useInterviewStore = create<InterviewState>((set) => ({
     sessions: [],
     currentSession: null,
     isLoading: false,
+    isInterviewActive: false,
     fetchSessionsByApplication: async (jobApplicationId) => {
         set({ isLoading: true });
         try {
@@ -89,5 +93,11 @@ export const useInterviewStore = create<InterviewState>((set) => ({
         } finally {
             set({ isLoading: false });
         }
+    },
+    startInterview: async () => {
+        set({ isInterviewActive: true });
+    },
+    endInterview: async () => {
+        set({ isInterviewActive: false });
     }
 }));

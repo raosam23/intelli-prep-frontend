@@ -2,6 +2,9 @@ export type ApplicationStatus = "applied" | "interviewing" | "approved" | "rejec
 export type InterviewStatus = "pending" | "in_progress" | "completed" | "incomplete";
 export type DifficultyLevel = "junior" | "mid" | "senior";
 export type InterviewType = "technical" | "managerial" | "behavioral" | "mixed";
+export type InterviewPageStatusType = "warning" | "connecting" | "fit_score" | "interview" | "completed" | "error";
+export type InterviewMessagesType = { role: "ai" | "user", content: string }
+export type EvaluationVerdict = "strong_hire" | "hire" | "no_decision" | "no_hire" | "strong_no_hire";
 
 export interface User {
     id: string;

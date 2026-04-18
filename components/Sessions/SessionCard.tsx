@@ -25,8 +25,17 @@ const SessionCard = ({ session }: { session: Interview }) => {
             </div>
 
             <div className="flex items-center gap-2 pt-2 border-t border-zinc-800">
-                <p className="text-zinc-400 text-sm">{session.num_questions} Questions</p>
-                {session.focus_area && <p className="text-zinc-500 text-xs">· Focus: {session.focus_area}</p>}
+                <p className="text-zinc-400 text-sm">
+                    {session.num_questions} {session.num_questions === 1 ? "Question" : "Questions"}
+                </p>
+                {session.focus_area && (
+                    <p className="text-zinc-500 text-xs">
+                        · Focus:{" "}
+                        {session.focus_area && session.focus_area.length > 25
+                            ? `${session.focus_area.substring(0, 25)}...`
+                            : session.focus_area}
+                    </p>
+                )}
             </div>
         </Card>
     );
