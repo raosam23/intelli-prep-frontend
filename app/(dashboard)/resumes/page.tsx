@@ -47,6 +47,13 @@ const Resumes = () => {
             event.target.value = ""; // Reset the file input
         }
     };
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <LoaderCircle className="animate-spin text-white" size={32} />
+            </div>
+        );
+    }
     return (
         <div className="min-h-screen w-full p-8 space-y-6">
             <div className="flex items-center justify-between">
@@ -58,8 +65,7 @@ const Resumes = () => {
                         disabled={isLoading}
                         className="cursor-pointer"
                     >
-                        {isLoading ? <LoaderCircle className="animate-spin" /> : <Upload size={16} className="mr-2" />}{" "}
-                        Upload Resume
+                        <Upload size={16} className="mr-2" /> Upload Resume
                     </Button>
                 </div>
             </div>

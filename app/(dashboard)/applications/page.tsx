@@ -75,7 +75,11 @@ const Applications = () => {
         <div className="min-h-screen w-full p-8 space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-white">My Applications</h1>
-                <Button className="cursor-pointer" disabled={isLoading} onClick={() => setIsDialogOpen(true)}>
+                <Button
+                    className="cursor-pointer"
+                    disabled={isLoading || resumes.length === 0}
+                    onClick={() => setIsDialogOpen(true)}
+                >
                     New Application
                 </Button>
             </div>
