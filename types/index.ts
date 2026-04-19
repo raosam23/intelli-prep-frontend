@@ -54,3 +54,47 @@ export interface CreateSessionData {
     interview_type: InterviewType;
     focus_area?: string;
 }
+
+export interface OverallStats {
+    total_applications: number;
+    total_interviews_completed: number;
+    average_fit_score: number | null;
+    average_overall_score: number | null;
+}
+
+export interface FitScoreTrend {
+    job_application_id: string;
+    fit_score: number;
+    created_at: string;
+    status: ApplicationStatus;
+}
+
+export interface InterviewPerformanceTrend {
+    session_id: string;
+    communication_score: number;
+    technical_score: number,
+    problem_solving_score: number;
+    overall_score: number;
+    created_at: string;
+}
+
+export interface ApplicationByStatus {
+    applied: number;
+    interviewing: number,
+    approved: number;
+    rejected: number;
+}
+
+export interface AverageScores {
+    communication_score: number;
+    technical_score: number,
+    problem_solving_score: number;
+}
+
+export interface DashboardResponse {
+    overall_stats: OverallStats;
+    fit_score_trend: FitScoreTrend[];
+    interview_performance_trend: InterviewPerformanceTrend[];
+    application_by_status: ApplicationByStatus;
+    average_scores: AverageScores;
+}
