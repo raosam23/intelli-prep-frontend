@@ -30,7 +30,7 @@ const Sidebar = () => {
     return (
         <div className="flex flex-col h-screen w-64 bg-zinc-900 border-r border-zinc-800">
             <div className="flex items-center gap-3 px-4 py-5 border-b border-zinc-800">
-                <Image src="/logo.png" alt="Logo" width={64} height={64} loading="eager" />
+                <Image src="/logo.png" alt="Logo" width={64} height={64} loading="eager" unoptimized />
                 <span className="text-white font-bold text-lg">IntelliPrep</span>
             </div>
             <nav className="flex-1 px-3 py-4 space-y-1">
