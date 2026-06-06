@@ -1,7 +1,7 @@
 "use client";
 import { InterviewRouteParams } from "@/lib/utils";
 import { InterviewMessagesType, InterviewPageStatusType } from "@/types";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 import DontCloseWarningDialog from "@/components/interview/DontCloseWarningDialog";
@@ -12,10 +12,13 @@ import { Button } from "@/components/ui/button";
 import EvaluationCard from "@/components/interview/EvaluationCard";
 import InterviewError from "@/components/interview/InterviewError";
 import { useInterviewStore } from "@/store/interview.store";
+import InterviewInterruptedDialog from "@/components/interview/InterviewInterruptedDialog";
 
 const InterviewPage = () => {
+    const router = useRouter();
     const { session_id } = useParams<InterviewRouteParams>();
     const [isWarningDialogOpen, setIsWarningDialogOpen] = useState<boolean>(true);
+    const [isInterviewInterruptDialogOpen, setIsInterviewInterruptDialogOpen] = useState<boolean>(false);
     const [pageStatus, setPageStatus] = useState<InterviewPageStatusType>("warning");
     const [fitScore, setFitScore] = useState<number | null>(null);
     const [fitBreakdown, setFitBreakdown] = useState<Record<string, number> | null>(null);
@@ -138,6 +141,21 @@ const InterviewPage = () => {
         };
         ws.onclose = () => console.log("WebSocket connection closed");
     };
+    const handleSessionEnd = () => {
+        setPageStatus("interrupted");
+        setIsInterviewInterruptDialogOpen(true);
+    };
+
+    const handleInterviewEnd = (isQuit: boolean) => {
+        setIsInterviewInterruptDialogOpen(false);
+        if (isQuit) {
+            endInterview();
+            wsRef.current?.close();
+            router.push("/applications");
+        } else {
+            setPageStatus("interview");
+        }
+    };
 
     if (pageStatus === "warning") {
         return (
@@ -213,8 +231,24 @@ const InterviewPage = () => {
                     >
                         Send
                     </Button>
+                    <Button
+                        type="button"
+                        className="w-fit border-red-900 bg-red-950 text-red-400 hover:text-red-200 hover:bg-red-900 cursor-pointer"
+                        onClick={handleSessionEnd}
+                    >
+                        End
+                    </Button>
                 </form>
             </div>
+        );
+    }
+    if (pageStatus === "interrupted") {
+        return (
+            <InterviewInterruptedDialog
+                isInterruptDialogOpen={isInterviewInterruptDialogOpen}
+                setIsInterruptDialogOpen={setIsInterviewInterruptDialogOpen}
+                onConfirm={handleInterviewEnd}
+            />
         );
     }
     if (pageStatus === "completed") {
